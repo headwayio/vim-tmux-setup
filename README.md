@@ -10,7 +10,7 @@ See the included documentation in the cheat_sheet.md file.
 Install by running the following command in your terminal:
 
 ```
-exec 3<&1;bash <&3 <(curl https://gist.githubusercontent.com/jondkinney/2040114/raw/vim.sh 2> /dev/null)
+exec 3<&1;bash <&3 <(curl https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/vim.sh 2> /dev/null)
 ```
 
 The bash redirects allow this script to prompt for user input including

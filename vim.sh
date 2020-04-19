@@ -54,7 +54,7 @@ if [[ -d "$HOME/.tmuxinator" && ! -L "$HOME/.tmuxinator" ]]; then
 fi
 
 function refresh_vimrc_main(){
-  curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/vimrc_main > $HOME/.vim/vimrc_main
+  curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/vimrc_main > $HOME/.vim/vimrc_main
   if [ "$defaults" != "true" ]; then
     echo "!!!!! Wrote $HOME/.vim/vimrc_main"
   fi
@@ -73,7 +73,7 @@ function full_vim_setup(){
     echo ">>>>> Writing Config Files..."
   fi
 
-  curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/plugins.vim > $HOME/.vim/plugins.vim
+  curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/plugins.vim > $HOME/.vim/plugins.vim
   if [ "$defaults" != "true" ]; then
     echo "!!!!! Wrote $HOME/.vim/plugins.vim"
     echo "!!!!! Installing vim-plug"
@@ -81,26 +81,26 @@ function full_vim_setup(){
   curl -s https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim > $HOME/.vim/autoload/plug.vim
 
 
-  curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/vimrc > $HOME/.vimrc
+  curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/vimrc > $HOME/.vimrc
   if [ "$defaults" != "true" ]; then
     echo "!!!!! Wrote $HOME/.vimrc"
   fi
 
   if [ "$has_vimrc_custom" != "true" ]; then
-    curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/vimrc_custom > $HOME/.vimrc_custom
+    curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/vimrc_custom > $HOME/.vimrc_custom
     if [ "$defaults" != "true" ]; then
       echo "!!!!! Wrote $HOME/.vimrc_custom"
     fi
   fi
 
   if [ "$has_nvim_config" != "true" ]; then
-    curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/nvim_init > $HOME/.config/nvim/init.vim
+    curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/nvim_init > $HOME/.config/nvim/init.vim
     if [ "$defaults" != "true" ]; then
       echo "!!!!! Wrote $HOME/.config/nvim/init.vim"
     fi
   fi
 
-  curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/snippets > $HOME/.vim/snippets/_.snippets
+  curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/snippets > $HOME/.vim/snippets/_.snippets
   if [ "$defaults" != "true" ]; then
     echo "!!!!! Wrote $HOME/.vim/snippets/_.snippets"
   fi
@@ -173,7 +173,7 @@ function setup_tmuxinator(){
       mkdir -p $HOME/.tmuxinator
     fi
 
-    curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/hack.yml > $HOME/.tmuxinator/hack.yml
+    curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/hack.yml > $HOME/.tmuxinator/hack.yml
     if [ "$defaults" != "true" ]; then
       echo "!!!!! Wrote $HOME/.tmuxinator/hack.yml"
     fi
@@ -181,20 +181,20 @@ function setup_tmuxinator(){
 
 function setup_tmux(){
   echo ">>>>> Setting up Tmux..."
-  curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/tmux.conf > $HOME/.tmux.conf
+  curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/tmux.conf > $HOME/.tmux.conf
   if [ "$defaults" != "true" ]; then
     echo "!!!!! Wrote $HOME/.tmux.conf"
   fi
 
   if [[ $OSTYPE =~ ^[darwin] ]]; then
-    curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/tmux_mac.conf > $HOME/.tmux_mac.conf
+    curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/tmux_mac.conf > $HOME/.tmux_mac.conf
     if [ "$defaults" != "true" ]; then
       echo "!!!!! Wrote $HOME/.tmux_mac.conf"
     fi
   fi
 
   if [[ $OSTYPE =~ ^[linux] ]]; then
-    curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/tmux_linux.conf > $HOME/.tmux_linux.conf
+    curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/tmux_linux.conf > $HOME/.tmux_linux.conf
     if [ "$defaults" != "true" ]; then
       echo "!!!!! Wrote $HOME/.tmux_linux.conf"
     fi
@@ -284,8 +284,8 @@ function setup_remote_clipboard(){
 
   mkdir -p $HOME/bin/
 
-  curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/pbcopy-remote > $HOME/bin/pbcopy-remote
-  curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/pbpaste-remote > $HOME/bin/pbpaste-remote
+  curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/pbcopy-remote > $HOME/bin/pbcopy-remote
+  curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/pbpaste-remote > $HOME/bin/pbpaste-remote
 
   if [ "$defaults" != "true" ]; then
     echo "!!!!! Wrote $HOME/bin/pbcopy-remote"
@@ -356,8 +356,8 @@ function backup_local_clipboard(){
 function setup_local_clipboard(){
   echo ">>>>> Setting up local clipboard..."
 
-  curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/pbcopy.plist > $HOME/Library/LaunchAgents/pbcopy.plist
-  curl -s https://gist.githubusercontent.com/jondkinney/2040114/raw/pbpaste.plist > $HOME/Library/LaunchAgents/pbpaste.plist
+  curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/pbcopy.plist > $HOME/Library/LaunchAgents/pbcopy.plist
+  curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/pbpaste.plist > $HOME/Library/LaunchAgents/pbpaste.plist
 
   if [ "$defaults" != "true" ]; then
     echo "!!!!! Wrote $HOME/Library/LaunchAgents/pbcopy.plist"

@@ -3,7 +3,6 @@
 Hints, workflow optimizations, and plugins that we use for daily Rails and JS dev with the shared Headway Vim/Tmux setup.
 
 See these links for general Vim and Tmux cheat sheets:
-  * https://gist.github.com/jondkinney/2040114
   * http://www.viemu.com/a_vi_vim_graphical_cheat_sheet_tutorial.html
   * https://gist.github.com/MohamedAlaa/2961058
   * https://vim.rtorr.com
