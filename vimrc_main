@@ -42,7 +42,7 @@ set encoding=utf-8              " Set utf-8 encoding
 set pastetoggle=<F2>            " Press F2 in insert mode to preserve tabs when pasting from clipboard into terminal
 set updatetime=750              " Should 'fix' git-gutter weird highlighting issues
 set notimeout ttimeout ttimeoutlen=10 "Quckly time out on keycodes, but never time out on mappings
-set switchbuf=useopen,usetab    "Attempt to edit currently open files instead of opening multiple buffers.
+set switchbuf=useopen,usetab    "Attempt to edit currently open files instead of opening multiple buffers. TODO: possibly turn this off
 set modelineexpr
 
 " TEST for react gf
@@ -71,23 +71,19 @@ set wildignore+=*/production_data/*,*/db/dumps/*,*/coverage/*,*/accredited_inves
 let mapleader = ","   "remap leader to ',' which is much easier than '\'
 let maplocalleader = "\\" "add a local leader of '\'
 
-" Reveal in Finder - opens finder to folder of the file that is currently open
+" Reveal in Finder - opens finder to the folder of the file that is currently open
 command! Rif execute '!open %:p:h'
 
 
 
 """ UNMAPS
-" S command in normal mode substitutes the whole line after a motion. I don't
-" like that, so we'll disable it here.
+" Disable the <S> command in normal mode which substitutes the whole line after a motion.
 nmap S <nop>
 
-" STOP the help from being so... HELPFULL ;)
+" STOP the help from popping up with the F1 key.
 inoremap <F1> <ESC>
 nnoremap <F1> <ESC>
 vnoremap <F1> <ESC>
-
-" Disable some built in commands I don't like
-" map K <Nop>
 
 
 
@@ -100,6 +96,12 @@ vnoremap <F1> <ESC>
 hi SpellBad cterm=underline ctermfg=white
 nn <F6> :setlocal spell! spell?<CR>
 
+" FIXME: figure out which spelling to keep
+" Spelling
+hi SpellBad ctermfg=009 ctermbg=001 guifg=#ff0000 guibg=#ffffff
+hi SpellCap ctermfg=009 ctermbg=001 guifg=#ff0000 guibg=#ffffff
+
+" Open the word under the cursor in the macOS Dictionary with F11
 map <F11> "dyiw:call MacDict(@d)<CR>
 
 
@@ -171,14 +173,9 @@ set colorcolumn=81
 " Right column guide (git commit message)
 au BufNewFile,BufRead COMMIT_EDITMSG setlocal colorcolumn=51
 
-" Spelling
-hi SpellBad ctermfg=009 ctermbg=001 guifg=#ff0000 guibg=#ffffff
-hi SpellCap ctermfg=009 ctermbg=001 guifg=#ff0000 guibg=#ffffff
-
 " Cursor
 " This switches the cursor into a pipe when in insert mode tmux will only
 " forward escape sequences to the terminal if surrounded by a DCS sequence
-" http://sourceforge.net/mailarchive/forum.php?thread_name=AANLkTinkbdoZ8eNR1X2UobLTeww1jFrvfJxTMfKSq-L%2B%40mail.gmail.com&forum_name=tmux-users
 if has('nvim')
   let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 else
@@ -282,8 +279,6 @@ let g:fzf_action = {
 """" Ack in Project
 " AckG matches file names in the project, regular Ack looks inside those files
 map <Leader><C-t> :AckG<space>
-" map <Leader><C-f> :Ack!<space>
-" map <Leader><C-f> :Ag<space>
 let g:ackprg = 'ag'
 
 " Split rightward so as not to displace a left NERDTree
