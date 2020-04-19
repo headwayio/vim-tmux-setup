@@ -1,0 +1,1459 @@
+""" SETTINGS
+set nocompatible                " Don't need to keep compatibility with Vi
+filetype plugin indent on       " enable detection, plugins and indenting in one step
+syntax on                       " Turn on syntax highlighting
+set synmaxcol=1000              " Don't try to highlight lines longer than 1000 characters
+set showcmd                     " show incomplete cmds down the bottom
+set noshowmode                  " don't show current mode down the bottom (set showmode does the opposite)
+set showmatch                   " Set show matching parenthesis
+set noexrc                      " Don't use the local config
+set virtualedit=all             " Allow the cursor to go in to 'invalid' places
+set incsearch                   " Find the next match as we type the search
+set hlsearch                    " Hilight searches by default
+set ignorecase                  " Ignore case when searching
+set smartcase                   " ...unless they contain at least one capital letter
+set shiftwidth=2                " Number of spaces to use in each autoindent step
+set shiftround                  " When at 3 spaces, and I hit > ... go to 4, not 5
+set tabstop=2                   " Two tab spaces
+set softtabstop=2               " Number of spaces to skip or insert when <BS>ing or <Tab>ing
+set expandtab                   " Spaces instead of tabs for better cross-editor compatibility
+set smarttab                    " Use shiftwidth and softtabstop to insert or delete (on <BS>) blanks
+set nowrap                      " No wrapping
+set copyindent                  " Copy the previous indentation on autoindenting
+set backspace=indent,eol,start  " Allow backspacing over everything in insert mode
+set noerrorbells                " Don't make noise
+set wildmenu                    " Make tab completion act more like bash
+set wildmode=list:longest       " Tab complete to longest common string, like bash
+" set mouse-=a                  " Disable mouse automatically entering visual mode
+set mouse=a                     " Enable mouse support in the terminal VIM and activate visual mode with dragging
+if !has('nvim')
+  set ttymouse=xterm2           " Allow resizing of Vim splits inside tmux. See https://superuser.com/a/550482/648584
+  set ttyscroll=3               " Prefer redraw to scrolling for more than 3 lines TODO: see if I like this
+endif
+set bs=2                        " This influences the behavior of the backspace option. See :help 'bs' for more details
+set number                      " Show line numbers
+set cmdheight=2                 " Make the command line a little taller to hide 'press enter to viem more' text
+set ttyfast                     " Improves screen redraw
+set lazyredraw                  " Avoid redrawing the screen mid-command.
+set splitbelow                  " New splits will be created below the current split
+set splitright                  " New splits will be created to the right of the current split
+set confirm                     " Ask to save changes
+set encoding=utf-8              " Set utf-8 encoding
+set pastetoggle=<F2>            " Press F2 in insert mode to preserve tabs when pasting from clipboard into terminal
+set updatetime=750              " Should 'fix' git-gutter weird highlighting issues
+set notimeout ttimeout ttimeoutlen=10 "Quckly time out on keycodes, but never time out on mappings
+set switchbuf=useopen,usetab    "Attempt to edit currently open files instead of opening multiple buffers.
+set modelineexpr
+
+" TEST for react gf
+set path=.,src
+set suffixesadd=.js,.jsx
+
+function! LoadMainNodeModule(fname)
+    let nodeModules = "./node_modules/"
+    let packageJsonPath = nodeModules . a:fname . "/package.json"
+
+    if filereadable(packageJsonPath)
+        return nodeModules . a:fname . "/" . json_decode(join(readfile(packageJsonPath))).main
+    else
+        return nodeModules . a:fname
+    endif
+endfunction
+
+set includeexpr=LoadMainNodeModule(v:fname)
+" END Test for react gf
+
+
+runtime macros/matchit.vim      "Extend % for matching brackets, if/end, and more
+
+set wildignore+=*/production_data/*,*/db/dumps/*,*/coverage/*,*/accredited_investor_questionnaires/*,*/accredited_verification_pdfs/*,*/HTML_DEMOS/*,*/docusign_docs/*,*/cookbooks/*,*/public/uploads/*,*/public/images/*,*/vim_sessions/*,*/node_modules/*,*/bower_components/*,*/tmp/*,*.so,*.swp,*.zip,*/sassdoc/*     " MacOSX/Linux
+
+let mapleader = ","   "remap leader to ',' which is much easier than '\'
+let maplocalleader = "\\" "add a local leader of '\'
+
+" Reveal in Finder - opens finder to folder of the file that is currently open
+command! Rif execute '!open %:p:h'
+
+
+
+""" UNMAPS
+" S command in normal mode substitutes the whole line after a motion. I don't
+" like that, so we'll disable it here.
+nmap S <nop>
+
+" STOP the help from being so... HELPFULL ;)
+inoremap <F1> <ESC>
+nnoremap <F1> <ESC>
+vnoremap <F1> <ESC>
+
+" Disable some built in commands I don't like
+" map K <Nop>
+
+
+
+""" SPELLING
+" Toggle spellcheck with F6 (highlighted and underlined in stark WHITE)
+" ---------------------------------------------------------------------
+"   z=  - view spelling suggestions for a misspelled word
+"   zg  - add word to dictionary
+"   zug - undo add word to dict
+hi SpellBad cterm=underline ctermfg=white
+nn <F6> :setlocal spell! spell?<CR>
+
+map <F11> "dyiw:call MacDict(@d)<CR>
+
+
+
+""" CLIPBOARD
+if has('nvim')
+  " Use unnamed registers for clipboard
+  set clipboard+=unnamedplus
+else
+  " This allows you to share Vim's clipboard with OS X.
+  set clipboard=unnamed
+endif
+
+if has("unix")
+  let s:uname = system("uname")
+  if s:uname == "Linux\n"
+    " Remote Clipboard
+    function! PropagatePasteBufferToOSX()
+      let @n=getreg('"')
+
+      call system('pbcopy-remote', @n)
+      echo "done"
+    endfunction
+
+    function! PopulatePasteBufferFromOSX()
+      let @" = system('pbpaste-remote')
+      echo "done"
+    endfunction
+
+    nnoremap <leader>3 :call PopulatePasteBufferFromOSX()<cr>
+    nnoremap <leader>2 :call PropagatePasteBufferToOSX()<cr>
+
+    nnoremap yy yy:call PropagatePasteBufferToOSX()<cr>
+
+    function! YRRunAfterMaps()
+      nnoremap Y   :<C-U>YRYankCount 'y$'<CR> <bar> :call PropagatePasteBufferToOSX()<CR>
+      vnoremap y   y:call PropagatePasteBufferToOSX()<CR>
+    endfunction
+  endif
+endif
+
+
+
+""" COLORS & THEMES & BUFFER DISPLAY
+if has("unix")
+  let s:uname = system("uname")
+  if s:uname != "Darwin\n"
+    set t_Co=256 "256 colors support
+    let g:solarized_termcolors=16
+  endif
+endif
+
+if has('termguicolors') && !has('gui_running')
+  set termguicolors
+endif
+
+let g:solarized_termtrans=1
+set background=dark
+" set background=light
+colorscheme solarized8
+
+" TMUX helper for solarized8
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+" Right column guide
+set colorcolumn=81
+
+" Right column guide (git commit message)
+au BufNewFile,BufRead COMMIT_EDITMSG setlocal colorcolumn=51
+
+" Spelling
+hi SpellBad ctermfg=009 ctermbg=001 guifg=#ff0000 guibg=#ffffff
+hi SpellCap ctermfg=009 ctermbg=001 guifg=#ff0000 guibg=#ffffff
+
+" Cursor
+" This switches the cursor into a pipe when in insert mode tmux will only
+" forward escape sequences to the terminal if surrounded by a DCS sequence
+" http://sourceforge.net/mailarchive/forum.php?thread_name=AANLkTinkbdoZ8eNR1X2UobLTeww1jFrvfJxTMfKSq-L%2B%40mail.gmail.com&forum_name=tmux-users
+if has('nvim')
+  let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
+else
+  if exists('$TMUX')
+    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+  else
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+  endif
+endif
+
+if has("gui_macvim")
+  set guifont=Monaco\ for\ Powerline:h12
+endif
+
+" TODO: (2018-02-24) jon => decide if I still want this
+set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v]
+"              | | | | |  |   |      |  |     |    |
+"              | | | | |  |   |      |  |     |    + current
+"              | | | | |  |   |      |  |     |       column
+"              | | | | |  |   |      |  |     +-- current line
+"              | | | | |  |   |      |  +-- current % into file
+"              | | | | |  |   |      +-- current syntax in
+"              | | | | |  |   |          square brackets
+"              | | | | |  |   +-- current fileformat
+"              | | | | |  +-- number of lines
+"              | | | | +-- preview flag in square brackets
+"              | | | +-- help flag in square brackets
+"              | | +-- readonly flag in square brackets
+"              | +-- modified flag in square brackets
+"              +-- full path to file in the buffer
+
+" Show line endings and tabs (whitespace markers)
+nmap <leader>il :set list!<CR>
+" Use the same symbols as TextMate for tabstops and EOLs
+set listchars=tab:▸\ ,eol:¬
+
+" toggle hide numbers
+map <leader>1 :set nonumber! number?<CR>
+
+" toggle relative numbers
+function! NumberToggle()
+  if(&relativenumber == 1)
+    set norelativenumber
+    set number
+  else
+    set relativenumber
+  endif
+endfunc
+nnoremap <leader>l :call NumberToggle()<CR>
+
+" Indent guides turned on with <leader>ig
+let g:indent_guides_start_level=1
+let g:indent_guides_guide_size=1
+
+" Airline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline_powerline_fonts = 1
+let g:airline_detect_iminsert = 1
+" tmux plugin for vim-airline https://github.com/edkolev/tmuxline.vim
+let g:tmuxline_preset = 'full'
+
+" Signify
+"let g:signify_sign_color_guibg = '#032b36'
+let g:signify_sign_color_inherit_from_linenr = 1
+let g:signify_sign_weight = 'NONE'
+let g:signify_update_on_bufenter = 1
+
+
+
+""" NERDTree
+" Open NERDTree with [<leader>d]
+map <Leader>d :NERDTreeMirrorToggle<CR>
+" Show current file in the NERDTree hierarchy
+map <Leader>D :NERDTreeFind<CR>
+
+let NERDTreeMinimalUI=1
+let NERDTreeDirArrows=1
+let NERDTreeWinSize = 51
+let NERDTreeShowLineNumbers=1
+let g:nerdtree_tabs_focus_on_files=1
+let g:nerdtree_tabs_open_on_console_startup=1
+let g:nerdtree_tabs_smart_startup_focus=2
+" list of file types I don't want to auto-open nerdtree for
+autocmd FileType vim,tmux,gitcommit,gitconfig,gitrebase let g:nerdtree_tabs_open_on_console_startup=0
+autocmd BufNewFile,BufRead vundle let g:nerdtree_tabs_open_on_console_startup=0
+
+let NERDSpaceDelims=1 " For nerdcommenter, add one space after comment char
+
+
+
+""" FUZZY FIND
+nnoremap <C-f> :FZF<CR>
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-i': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+"""" Ack in Project
+" AckG matches file names in the project, regular Ack looks inside those files
+map <Leader><C-t> :AckG<space>
+" map <Leader><C-f> :Ack!<space>
+" map <Leader><C-f> :Ag<space>
+let g:ackprg = 'ag'
+
+" Split rightward so as not to displace a left NERDTree
+let g:ack_mappings = {
+      \  'v':  '<C-W><CR><C-W>L<C-W>p<C-W>J<C-W>p',
+      \ 'gv': '<C-W><CR><C-W>L<C-W>p<C-W>J',
+      \ '<cr>': ':NERDTreeMirrorToggle<CR><CR>:NERDTreeMirrorToggle<CR><C-W>l' }
+
+nnoremap <Leader><C-f> :tabnew <Bar> Ack!<Space>
+
+
+
+""" VIMWIKI
+let wiki0 = {}
+let wiki0.path = '~/vimwiki/'
+let wiki0.path_html = '~/vimwiki_html/'
+let wiki0.auto_toc = 1
+
+let wiki1 = {}
+let wiki1.path = '~/vimwiki_headway/'
+let wiki1.path_html = '~/vimwiki_headway_html/'
+let wiki1.auto_toc = 1
+
+" Run multiple wikis
+let g:vimwiki_list = [wiki0, wiki1]
+
+au BufRead,BufNewFile *.wiki set filetype=vimwiki
+
+" Open diary with \d
+:autocmd FileType vimwiki map <localleader>d :VimwikiMakeDiaryNote<CR>:Calendar<CR>
+
+au! BufRead ~/vimwiki_headway/index.wiki !cd ~/vimwiki_headway;git pull
+" au! BufWritePost ~/vimwiki_headway/* !cd ~/vimwiki_headway;git add -A;git commit -m "Auto commit + push.";git push
+
+" let g:vimwiki_folding='expr'
+
+
+
+""" SPLIT AND BUFFER MANAGEMENT
+
+" Resize splits when the window is resized
+au VimResized * :wincmd =
+
+" Better split management, kept in sync with tmux' mappings of (<prefix>| and <prefix>-)
+noremap <leader>- :sp<CR><C-w>j
+noremap <leader>\| :vsp<CR><C-w>l
+
+" Allow resizing splits with +/_ for down(bigger) / up(smaller) and ALT-=(bigger)/ALT–(smaller). Repeatable w/hold.
+if bufwinnr(1)
+  " Alt =
+  map ≠ <C-W>>
+  " Alt -
+  map – <C-W><
+
+  map _ <C-W>-
+  map + <C-W>+
+endif
+
+" Adjusts all buffers to the same size
+map <Leader>= <C-w>=
+
+" Open splits from quickfix window like you can in ctrl-p
+let g:qfenter_vopen_map = ['<C-v>']
+let g:qfenter_hopen_map = ['<C-CR>', '<C-s>', '<C-x>',  '<C-i>']
+let g:qfenter_topen_map = ['<C-t>']
+
+let g:eighties_bufname_additional_patterns = ['fugitiveblame','locationlist'] " Don't try to auto-resize a fugitive blame split to 80 chars
+
+noremap <F5> :redraw!<cr>
+
+
+""" SEARCH & FIND & REPLACE
+"Search and replace the word under the cursor with whatever you type in
+nnoremap <Leader>s :%s/\<<C-r><C-w>\>/
+
+"Search and replace only within a given selection. This DOES NOT replace all
+" instances on the line that the highlight is on, which is why it's awesome.
+vnoremap <Leader>S :s/\%V//g<Left><Left><Left>
+
+" Better search with insearch
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+
+" Turn highlighting off after a search (and / or turn off highlights)
+noremap <silent> <leader><space> :noh<cr>:call clearmatches()<cr>
+
+" Keeps cursor on star search highlight
+let g:indexed_search_dont_move=1
+
+" http://vim.wikia.com/wiki/Make_search_results_appear_in_the_middle_of_the_screen
+nnoremap <silent> <F4> :call <SID>SearchMode()<CR>
+function! s:SearchMode()
+  " if !exists('s:searchmode') || s:searchmode == 0
+  if !exists('s:searchmode') || s:searchmode == 2
+    echo 'Search next: scroll hit to middle if not on same page'
+    nnoremap <silent> n n:call <SID>MaybeMiddle()<CR>
+    nnoremap <silent> N N:call <SID>MaybeMiddle()<CR>
+    let s:searchmode = 1
+  " elseif s:searchmode == 1
+  else
+    echo 'Search next: scroll hit to middle'
+    nnoremap n nzz
+    nnoremap N Nzz
+    let s:searchmode = 2
+  " else
+    " echo 'Search next: normal'
+    " nunmap n
+    " nunmap N
+    " let s:searchmode = 0
+  endif
+endfunction
+
+" If cursor is in first or last line of window, scroll to middle line.
+function! s:MaybeMiddle()
+  if winline() == 1 || winline() == winheight(0)
+    normal! zz
+  endif
+endfunction
+
+augroup searchmode
+  au!
+  au BufRead * call s:SearchMode()
+augroup END
+
+
+
+""" SESSION MANAGEMENT AND OPENING FILES
+" Create new session
+nmap SC :Obsess ~/.vim/sessions/
+" Open the last saved session
+nmap SO :so ~/.vim/sessions/
+nmap SQ :Obsess!<CR>
+
+" OpenChangedFiles COMMAND
+" Open a split for each dirty (or new) file in git
+" Shamelessly stolen from Gary Bernhardt: https://github.com/garybernhardt/dotfiles
+function! OpenChangedFiles()
+  only " Close all windows, unless they're modified
+  let modified_status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
+  let added_status = system('git status -s | grep "^ \?\(??\)" | cut -d " " -f 2')
+  let status = modified_status . added_status
+  let filenames = split(status, "\n")
+  if len(filenames) > 0
+    exec "edit " . filenames[0]
+    for filename in filenames[1:]
+      exec "tabedit " . filename
+    endfor
+  end
+endfunction
+command! OpenChangedFiles :call OpenChangedFiles()
+
+" nnoremap ,em :NERDTreeMirrorToggle<CR>:OpenChangedFiles<CR>:NERDTreeMirrorToggle<CR>
+nnoremap ,em :OpenChangedFiles<CR>
+
+
+function! OpenLastCommitFiles()
+  only " Close all windows, unless they're modified
+  let status = system('git log --pretty=format: --name-only --no-merges -n 1')
+  let filenames = split(status, "\n")
+  if len(filenames) > 0
+    exec "edit " . filenames[0]
+    for filename in filenames[1:]
+      exec "tabedit " . filename
+    endfor
+  end
+endfunction
+command! OpenLastCommitFiles :call OpenLastCommitFiles()
+
+nnoremap ,elc :OpenLastCommitFiles<CR>
+
+
+" Make sure Vim returns to the same line when you reopen a file.
+augroup line_return
+    au!
+    au BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \     execute 'normal! g`"zvzz' |
+        \ endif
+augroup END
+
+
+
+""" SAVING FILES AND BUFFERS
+" Hit SS in insert or normal mode to save
+noremap SS :w<CR>
+inoremap SS <Esc>:w<CR>
+
+" Force save the current file even if you don't have permission
+map W!! :w !sudo tee % > /dev/null<CR>
+cmap w!! w !sudo tee % >/dev/null
+
+" autoread and autowrite http://albertomiorin.com/blog/2012/12/10/autoread-and-autowrite-in-vim/
+augroup save
+  au!
+  au FocusLost * wall
+augroup END
+set nohidden
+set nobackup
+set noswapfile
+set nowritebackup
+set autoread
+set autowrite
+set autowriteall
+
+" Persistent-undo
+set undodir=$HOME/.vim/undo
+set undofile
+
+" Allow for typing various quit cmds while accidentally capitalizing a letter
+command! -bar Q quit                      "Allow quitting using :Q
+command! -bar -bang Q quit<bang>          "Allow quitting without saving using :Q!
+command! -bar QA qall                     "Quit all buffers
+command! -bar Qa qall                     "Quit all buffers
+command! -bar -bang QA qall<bang>         "Allow quitting without saving using :Q!
+command! -bar -bang Qa qall<bang>         "Allow quitting without saving using :Q!
+" NOTE - the above has nothing to do with the quit commands below
+
+" Make Q useful and avoid the confusing Ex mode.
+" Pressing Q with this mapping does nothing intentionally
+noremap Q <nop>
+" Close window.
+noremap QQ :q<CR>
+" close and write
+noremap WQ :wq<CR>
+" Close all.
+noremap QA :qa<CR>
+" Close, damn you!
+noremap Q! :q!<CR>
+
+" ,q to toggle quickfix window (where you have stuff like GitGrep)
+" ,oq to open it back up (rare)
+nmap <silent> ,cq :cclose<CR>
+nmap <silent> ,co :copen<CR>
+
+" With tmux-plugins/vim-tmux-focus-events, vim will load up a file on focus so write the file when switching away
+let g:tmux_navigator_save_on_switch = 1
+
+""" LINTING (ALE)
+let g:ale_fixers = {
+\   'ruby': ['rubocop'],
+\   'javascript': ['prettier', 'eslint'],
+\   'json': ['prettier', 'eslint'],
+\   'elixir': ['mix_format'],
+\}
+let g:ale_linters = {
+\  'javascript': ['eslint'],
+\  'ruby': ['ruby','rubocop','reek'],
+\  'erb': ['erb'],
+\  'slim': ['slim-lint'],
+\  'sass': ['sass-lint'],
+\   'elixir': ['elixir-ls'],
+\}
+
+" \  'commitmessage': ['gitlint'],
+
+
+" let g:ale_javascript_prettier_eslint_options = 'something can go here'
+let g:ale_fix_on_save = 1
+
+" highlight clear ALEErrorSign " otherwise uses error bg color (typically red)
+" highlight clear ALEWarningSign " otherwise uses error bg color (typically red)
+" hi Error   cterm=bold gui=bold
+" hi Warning cterm=bold gui=bold
+" hi link ALEErrorSign    Error
+" hi link ALEWarningSign  Warning
+" highlight ALEErrorSign ctermbg=NONE ctermfg=red
+" let g:ale_sign_error = '✘' " could use emoji
+let g:ale_sign_error = '•' " could use emoji
+" let g:ale_sign_warning = '•' " could use emoji
+let g:ale_sign_warning = '💩' " could use emoji
+let g:ale_statusline_format = ['X %d', '? %d', '']
+" %linter% is the name of the linter that provided the message
+" %s is the error or warning message
+let g:ale_echo_msg_format = '%linter% says %s'
+let g:ale_sign_column_always = 1
+let g:ale_ruby_rubocop_options = '--except Lint/Debugger -D'
+let g:ale_lint_on_text_changed='normal' " only lint when exiting insert and going into normal mode
+let g:ale_lint_delay = 250
+let g:ale_set_highlights = 1
+
+" Map keys to navigate between lines with errors and warnings.
+nnoremap <leader>an :ALENextWrap<cr>
+nnoremap <leader>ap :ALEPreviousWrap<cr>
+
+
+
+""" CTAGS
+"Update CTags
+nnoremap <silent> <leader>ct :!$(.git/hooks/ctags &)<cr> <bar> :redraw!<cr>
+
+" ExCTags window (requires http://ctags.sourceforge.net/)
+nmap <F8> :TagbarToggle<CR>
+let g:tagbar_left = 1
+let g:tagbar_autofocus = 1
+let g:tagbar_compact = 1
+let g:tagbar_autoclose = 1
+
+" Open ctag in tab/vertical split
+map <leader><C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+map <C-\> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+" NOTE: Jump to previous file with <leader><C-^>
+
+
+
+""" TABS
+" Load up all buffers into tabs
+nmap <localleader>bt :tab sball<CR>
+
+" Switch to last active tab see https://stackoverflow.com/a/2120168/935514
+let g:lasttab = 1
+nmap <Leader>fl :exe "tabn ".g:lasttab<CR>
+au TabLeave * let g:lasttab = tabpagenr()
+
+" Close current tab
+nmap <leader>fc :tabclose<CR>
+
+" previous tab(shift-9), next tab (shift-0)
+nnoremap ( :tabp<CR>
+nnoremap ) :tabn<CR>
+
+" switch tab order with Ctrl+<left>/<right>
+map <Esc>[C :tabm +1<Esc>
+map <Esc>[D :tabm -1<Esc>
+
+function! MoveToPrevTab()
+  "there is only one window
+  if tabpagenr('$') == 1 && winnr('$') == 1
+    return
+  endif
+  "preparing new window
+  let l:tab_nr = tabpagenr('$')
+  let l:cur_buf = bufnr('%')
+  if tabpagenr() != 1
+    close!
+    if l:tab_nr == tabpagenr('$')
+      tabprev
+    endif
+    sp
+  else
+    close!
+    exe "0tabnew"
+  endif
+  "opening current buffer in new window
+  exe "b".l:cur_buf
+endfunc
+
+function! MoveToNextTab()
+  "there is only one window
+  if tabpagenr('$') == 1 && winnr('$') == 1
+    return
+  endif
+  "preparing new window
+  let l:tab_nr = tabpagenr('$')
+  let l:cur_buf = bufnr('%')
+  if tabpagenr() < tab_nr
+    close!
+    if l:tab_nr == tabpagenr('$')
+      tabnext
+    endif
+    sp
+  else
+    close!
+    tabnew
+  endif
+  "opening current buffer in new window
+  exe "b".l:cur_buf
+endfunc
+
+" switch tab order with Ctrl+<up>/<down>
+map <Esc>[B :call MoveToNextTab()<CR>
+map <Esc>[A :call MoveToPrevTab()<CR>
+
+
+
+""" ALIGNMENT
+"if exists(":Tabularize")
+nmap <Leader>a= :Tabularize /=<CR>
+vmap <Leader>a= :Tabularize /=<CR>
+nmap <Leader>a: :Tabularize /:\zs<CR>
+vmap <Leader>a: :Tabularize /:\zs<CR>
+nmap <localleader>a, :Tabularize /,\zs<CR>
+vmap <localleader>a, :Tabularize /,\zs<CR>
+
+
+" Triggers align of cucumber tables when you close it out with a | and have at
+" least two lines. Thanks tpope :)
+function! s:align()
+  let p = '^\s*|\s.*\s|\s*$'
+  if exists(':Tabularize') && getline('.') =~# '^\s*|' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
+    let column = strlen(substitute(getline('.')[0:col('.')],'[^|]','','g'))
+    let position = strlen(matchstr(getline('.')[0:col('.')],'.*|\s*\zs.*'))
+    Tabularize/|/l1
+    normal! 0
+    call search(repeat('[^|]*|',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
+  endif
+endfunction
+
+inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
+
+
+
+""" FOLDING
+" toggle folding with za.
+" fold everything with zM
+" unfold everything with zR.
+" zm and zr can be used too
+" set foldmethod=syntax   "fold based on syntax (except for haml below)
+" set foldnestmax=10      "deepest fold is 10 levels
+" set nofoldenable        "dont fold by default
+autocmd BufNewFile,BufRead *.haml     setl foldmethod=indent nofoldenable
+autocmd! FileType nofile              setl foldmethod=indent nofoldenable
+autocmd BufNewFile,BufRead vimrc_main setl foldmethod=syntax nofoldenable
+set foldlevelstart=99
+
+" Space to toggle folds.
+nnoremap <Space> za
+vnoremap <Space> za
+
+" Toggles folds being enabled for this vim session
+function! FoldToggle()
+  if(&foldenable == 1)
+    au WinEnter * set nofen
+    au WinLeave * set nofen
+    au BufEnter * set nofen
+    au BufLeave * set nofen
+    :set nofen
+  else
+    au WinEnter * set fen
+    au WinLeave * set fen
+    au BufEnter * set fen
+    au BufLeave * set fen
+    :set fen
+  endif
+endfunc
+
+nnoremap <Leader>nf :call FoldToggle()<CR>
+
+
+
+""" CODE COVERAGE AND TESTING
+"""" Coverage via Cadre/github.com/killphi/vim-legend
+let g:legend_active_auto = 0
+let g:legend_hit_color = "ctermfg=64 cterm=bold gui=bold guifg=Green"
+let g:legend_ignored_sign = "◌"
+let g:legend_ignored_color = "ctermfg=234"
+let g:legend_mapping_toggle = '<Leader>cv'
+let g:legend_mapping_toggle_line = '<localleader>cv'
+
+
+"""" vim-rspec & cucumber test runner mappings <leader>T
+let VimuxHeight = "33" "this is percentage
+let VimuxOrientation = "h"
+let VimuxUseNearestPane = 1
+
+let g:turbux_command_prefix = 'clear;'
+
+nmap <leader>t <Plug>SendTestToTmux
+nmap <leader>T <Plug>SendFocusedTestToTmux
+
+" for rspec.vim (syntax highlighting enhancements for rspec)
+autocmd BufReadPost,BufNewFile *_spec.rb set syntax=rspec
+
+
+
+"""" CodeClimate Bindings
+nmap <Leader>aa :CodeClimateAnalyzeProject<CR>
+nmap <Leader>ao :CodeClimateAnalyzeOpenFiles<CR>
+nmap <Leader>af :CodeClimateAnalyzeCurrentFile<CR>
+
+
+
+""" PLUGIN SETTINGS
+" Set super tab to start completion with ctrl+j and move down the list with
+" more j's, move back with ctrl+k
+let g:SuperTabMappingForward = '<c-k>'
+let g:SuperTabMappingBackward = '<c-j>'
+
+" YankRing plugin to manage yanked/deleted buffers
+nnoremap <silent> <F7> :YRShow<CR>
+let g:yankring_history_file = '.yankring-history'
+" let g:yankring_zap_keys = 'f F t T / ?'
+
+" Dig through the tree of undo possibilities for your current file
+nnoremap <F3> :GundoToggle<CR>
+let g:gundo_right = 1
+let g:gundo_preview_bottom=1
+let g:gundo_preview_height = 40
+
+" Gist settings for mattn/gist-vim
+let g:gist_clip_command = 'pbcopy'
+let g:gist_detect_filetype = 1
+let g:gist_open_browser_after_post = 1
+let g:gist_post_private = 1
+
+" Buffrgator settings
+let g:buffergator_viewport_split_policy="B"
+let g:buffergator_split_size=10
+let g:buffergator_suppress_keymaps=1
+let g:buffergator_sort_regime = "mru"
+map <Leader>b :BuffergatorToggle<cr>
+
+" Vim-stripper
+let g:StripperIgnoreFileTypes = []
+
+" reload current top window/tab of chrome
+map <leader>rr :ChromeReload<CR>
+let g:returnApp = "iTerm"
+
+" Pull up the TODO And NOTE and FIXME definitions from the whole app
+let g:TagmaTasksPrefix = '<localleader><localleader>t'
+let g:TagmaTasksHeight = 10
+map <Leader><Leader>tt :TagmaTasks * app/** config/** db/** doc/** features/** lib/** public/** spec/** test/** vendor/**<CR>
+
+" Use deoplete (autocomplete) on startup
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
+
+" deoplete.nvim
+" inoremap <silent> <expr> <Tab> pumvisible() ? '\<C-n>' : deoplete#mappings#manual_complete()
+
+" deoplete-ternjs
+let g:deoplete#sources = {}
+let g:deoplete#sources.javascript = ['ternjs']
+" let g:deoplete#sources.gitcommit = ['github'] " currently broken https://github.com/SevereOverfl0w/deoplete-github/issues/5
+" let g:deoplete#sources.ruby = ['solar']
+
+let g:deoplete#omni#functions = {}
+let g:deoplete#omni_patterns = {}
+
+" tern_for_vim
+let g:tern#command = ['tern']
+let g:tern#arguments = ['--persistent']
+let g:deoplete#omni#functions.javascript = ['tern#Complete']
+let g:deoplete#omni_patterns.javascript = '\h\w*\|\h\w*\.\%(\h\w*\)\|[^. \t]\.\%(\h\w*\)'
+
+" ruby
+let g:deoplete#omni#functions.ruby = ['solar']
+let g:deoplete#omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+
+"Add extra filetypes
+let g:deoplete#sources#ternjs#filetypes = [
+                \ 'jsx',
+                \ 'javascript.jsx',
+                \ 'vue',
+                \ ]
+
+" UltiSnips
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<c-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:UltiSnipsSnippetsDir='~/.vim/UltiSnips'
+let g:ulti_expand_or_jump_res = 0
+function! CleverTab()"{{{
+    call UltiSnips#ExpandSnippetOrJump()
+    if g:ulti_expand_or_jump_res
+        return ""
+    else
+        if pumvisible()
+            return "\<c-n>"
+        else
+          return "\<Tab>"
+        endif
+    endif
+endfunction"}}}
+inoremap <silent> <tab> <c-r>=CleverTab()<cr>
+snoremap <silent> <tab> <esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+map <leader>u :UltiSnipsEdit<cr>
+
+
+if has("unix")
+  let s:uname = system("uname")
+  if s:uname == "Darwin\n"
+    " Do Mac stuff here
+
+    " Dash
+    "let g:dash_map = {
+    "  \ 'ruby'       : 'rails'
+    "  \ }
+    au BufNewFile,BufRead *.rb :DashKeywords rails ruby<cr>
+    nmap <silent> <LocalLeader>d <Plug>DashSearch
+    nmap <silent> <LocalLeader>D <Plug>DashGlobalSearch
+  endif
+endif
+
+
+
+""" MARKDOWN & WRITING
+map <localleader>m :MarkedOpen!<CR>
+let g:marked_app = "Marked" " Need to specify v1 of the app
+" let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_frontmatter = 1
+" Syntax highlight code in markdown files
+let g:markdown_fenced_languages = ['javascript', 'js=javascript', 'json=javascript', 'ruby']
+let g:vim_markdown_emphasis_multiline = 0
+let g:vim_markdown_toc_autofit = 1
+
+" Disable ]c for move to current header of vim-markdown
+nmap <Plug>Markdown_MoveToCurHeader <Plug>Markdown_MoveToCurHeader
+
+" function! s:Toc()
+"   if &filetype == 'markdown'
+"     :normal SS
+"   endif
+" endfunction
+" autocmd VimEnter *.m*  call s:Toc()
+" autocmd BufReadPost *.m* call s:Toc()
+" autocmd BufWinEnter *.m* call s:Toc()
+
+augroup ft_markdown
+  au!
+
+  au BufNewFile,BufRead *.m*down setlocal filetype=markdown foldlevel=1
+
+  " Use <localleader>1/2/3 to add headings.
+  au Filetype markdown nnoremap <buffer> <localleader>1 mzI# <ESC>
+  au Filetype markdown nnoremap <buffer> <localleader>2 mzI## <ESC>
+  au Filetype markdown nnoremap <buffer> <localleader>3 mzI### <ESC>
+
+  " au FileType markdown nnoremap <leader>al <Esc>`<i[<Esc>`>la](<Esc>"*]pa)<Esc>
+  "
+  " Create a Markdown-link structure for the current word or visual selection
+  " with leader 3. Paste in the URL later. Or use leader 4 to insert the
+  " current system clipboard as an URL.
+  au FileType markdown nnoremap <Leader>al ciw[<C-r>"]()<Esc>
+  au FileType markdown vnoremap <Leader>al c[<C-r>"]()<Esc>
+  " au FileType markdown nnoremap <Leader>ai <Esc>`<i[<Esc>`>la](<Esc>"*]pa)<Esc>
+  au FileType markdown vnoremap <Leader>ai <Esc>`<i[<Esc>`>la](<Esc>"*]pa)<Esc>
+
+  " au FileType markdown nnoremap <Leader>ai ciw[<C-r>"](<Esc>"*pli)<Esc>
+  " au FileType markdown vnoremap <Leader>ai c[<C-r>"](<Esc>"*]pa)<Esc>
+
+  " Use formd to transfer markdown from inline [to reference](to reference) links and vice versa
+  " see: http://drbunsen.github.com/formd/
+  au FileType markdown nmap <leader>fr :%! /usr/local/bin/formd/formd -r<CR>
+  au FileType markdown nmap <leader>fi :%! /usr/local/bin/formd/formd -i<CR>
+
+  " For some reason saving causes the Toc to go blank. Call it again to solve this for now. Then put cursor back.
+  " au FileType markdown noremap SS :w<CR>:Toc<CR><C-w>h
+  " au FileType markdown inoremap SS <Esc>:w<CR>:Toc<CR><C-w>h
+augroup END
+
+augroup textobj_quote
+  autocmd!
+  autocmd FileType markdown call textobj#quote#init({'educate': 0})
+  autocmd FileType html call textobj#quote#init({'educate': 0})
+  autocmd FileType textile call textobj#quote#init({'educate': 0})
+  autocmd FileType text call textobj#quote#init({'educate': 0})
+  autocmd FileType vimwiki call textobj#quote#init({'educate': 0})
+augroup END
+
+let g:pencil#mode_indicators = {'hard': '✐ hard', 'soft': '✎ soft', 'off': '✎ off',}
+let g:airline_section_x = '%{PencilMode()}'
+let g:pencil#map#suspend_af = 'K'   " default is no mapping
+
+augroup pencil
+  autocmd!
+  autocmd FileType markdown,md,vimwiki
+                            \   call pencil#init({'wrap': 'soft', 'textwidth': 80})
+                            \ | call litecorrect#init()
+                            \ | call lexical#init()
+                            \ | call textobj#sentence#init()
+                            \ | setl spell spl=en_us
+                            \ | setl fdo+=search
+  autocmd Filetype git,gitsendemail,*commit*,*COMMIT*
+                            \   call pencil#init({'wrap': 'soft', 'textwidth': 72})
+                            \ | call litecorrect#init()
+                            \ | call lexical#init()
+                            \ | call textobj#sentence#init()
+                            \ | setl spell spl=en_us et sw=2 ts=2 noai
+  autocmd Filetype html,xml     call pencil#init({'wrap': 'soft'})
+                            \ | call litecorrect#init()
+                            \ | setl spell spl=en_us et sw=2 ts=2
+augroup END
+
+" Vimwiki override to not check spelling when launching
+autocmd FileType vimwiki setl nospell
+
+
+
+""" FUGITIVE
+set diffopt+=vertical
+nnoremap <leader>gd :Gdiff<cr>
+nnoremap <leader>gst :Gstatus<cr>
+nnoremap <leader>gw :Gwrite<cr>
+nnoremap <leader>ge :Gedit<cr>
+nnoremap <leader>gb :Gblame -w -M<cr>
+nnoremap <leader>gB :Gitv!<cr>
+nnoremap <leader>gco :Gread<cr>
+nnoremap <leader>gcm :Gcommit<cr>
+nnoremap <leader>glg :Glog<cr>
+
+
+
+""" TEXT OBJECT ENHANCEMENTS
+" Motion for numbers.  Great for CSS.  Lets you do things like this:
+"
+" margin-top: 200px; -> ciN -> margin-top: px;
+"              ^                          ^
+" TODO: Handle floats.
+
+onoremap N :<c-u>call <SID>NumberTextObject(0)<cr>
+xnoremap N :<c-u>call <SID>NumberTextObject(0)<cr>
+onoremap aN :<c-u>call <SID>NumberTextObject(1)<cr>
+xnoremap aN :<c-u>call <SID>NumberTextObject(1)<cr>
+onoremap iN :<c-u>call <SID>NumberTextObject(1)<cr>
+xnoremap iN :<c-u>call <SID>NumberTextObject(1)<cr>
+
+function! s:NumberTextObject(whole)
+    normal! v
+
+    while getline('.')[col('.')] =~# '\v[0-9]'
+        normal! l
+    endwhile
+
+    if a:whole
+        normal! o
+
+        while col('.') > 1 && getline('.')[col('.') - 2] =~# '\v[0-9]'
+            normal! h
+        endwhile
+    endif
+endfunction
+
+
+
+""" NAVIGATION
+"""" hjkl movement
+" Move by visual screen lines instead of file lines. (aka when navigating wrapped text)
+" http://vim.wikia.com/wiki/Moving_by_screen_lines_instead_of_file_lines
+" TODO: Determine if this is still necessary
+noremap [A gk
+noremap [B gj
+inoremap [B <C-o>gj
+inoremap [A <C-o>gk
+
+" mapping to make movements operate on 1 screen line in wrap mode
+" TODO: See if pencil works fine with this commented out
+function! ScreenMovement(movement)
+   if &wrap
+      return "g" . a:movement
+   else
+      return a:movement
+   endif
+endfunction
+onoremap <silent> <expr> j ScreenMovement("j")
+onoremap <silent> <expr> k ScreenMovement("k")
+onoremap <silent> <expr> 0 ScreenMovement("0")
+onoremap <silent> <expr> ^ ScreenMovement("^")
+onoremap <silent> <expr> $ ScreenMovement("$")
+nnoremap <silent> <expr> j ScreenMovement("j")
+nnoremap <silent> <expr> k ScreenMovement("k")
+nnoremap <silent> <expr> 0 ScreenMovement("0")
+nnoremap <silent> <expr> ^ ScreenMovement("^")
+nnoremap <silent> <expr> $ ScreenMovement("$")
+
+"""" Easymotion
+let g:EasyMotion_startofline = 0 "keep cursor colum JK motion
+
+" change the default shading to something more readable with Solarized
+hi EasyMotionTarget guifg=red guibg=NONE ctermfg=red ctermbg=NONE
+hi EasyMotionTarget2First guifg=red guibg=NONE ctermfg=red ctermbg=NONE
+hi EasyMotionTarget2Second guifg=red guibg=NONE ctermfg=red ctermbg=NONE
+hi link EasyMotionShade  Comment
+"let g:EasyMotion_do_shade = 0
+
+
+
+""" LINE & CHARACTER MANIPULATION
+" Put cursor on the 81st column. Typically next action is to enter insert mode
+" and press enter to create a linebreak for code.
+noremap <leader>8 81\|
+
+" Commands from insert mode. Go to beginning of line and end of line
+" respecitvely and stay in insert mode to continue editing.
+inoremap II <Esc>I
+inoremap AA <Esc>A
+
+" Break down multi-line method chains, or commas, or semicolons
+" Insert a newline after each specified string (or before if use '!').
+" If no arguments, use previous search.
+command! -bang -nargs=* -range LineBreakAt <line1>,<line2>call LineBreakAt('<bang>', <f-args>)
+function! LineBreakAt(bang, ...) range
+  let save_search = @/
+  if empty(a:bang)
+    let before = ''
+    let after = '\ze.'
+    let repl = '&\r'
+  else
+    let before = '.\zs'
+    let after = ''
+    let repl = '\r&'
+  endif
+  let pat_list = map(deepcopy(a:000), "escape(v:val, '/\\.*$^~[')")
+  let find = empty(pat_list) ? @/ : join(pat_list, '\|')
+  let find = before . '\%(' . find . '\)' . after
+  " Example: 10,20s/\%(arg1\|arg2\|arg3\)\ze./&\r/ge
+  execute a:firstline . ',' . a:lastline . 's/'. find . '/' . repl . '/ge'
+  let @/ = save_search
+endfunction
+
+nmap <localleader>. :LineBreakAt! .<CR>
+nmap <localleader>, :LineBreakAt ,<CR>
+nmap <localleader>; :LineBreakAt ;<CR>
+
+" swap current with next word
+nnoremap <silent> gw "_yiw:s/\(\%#\w\+\)\(\_W\+\)\(\w\+\)/\3\2\1/<CR><c-o><c-l>:noh<CR>
+
+" Indent a file and return cursor to current spot
+map <F9> mzgg=G`z
+
+" DRAG IN VISUAL MODE
+" -------------------
+" <m-j> and <m-k> to drag lines in any mode (m is alt/option)
+" this is the textmate move lines around thing that I used to do do with arrow
+" keys but less fragile because it works in tmux or not
+" -----------------
+" ALT + h,j,k,l
+" h ˙
+" j ∆
+" k ˚
+" l ¬
+" -----------------
+noremap ∆ :m+<CR>
+noremap ˚ :m-2<CR>
+inoremap ∆ <Esc>:m+<CR>
+inoremap ˚ <Esc>:m-2<CR>
+vnoremap ∆ :m'>+<CR>gv
+vnoremap ˚ :m-2<CR>gv
+
+" set text wrapping toggles
+nmap <silent> <leader><Leader>tw :set invwrap<CR>:set wrap?<CR>
+
+" Tab/shift-tab to indent/outdent in visual mode.
+vnoremap <Tab> >gv
+vnoremap <S-Tab> <gv
+" Keep selection when indenting/outdenting.
+vnoremap > >gv
+vnoremap < <gv
+
+" quote, quotation, apostrophe, curly
+map <silent> <leader>qc <Plug>ReplaceWithCurly
+map <silent> <leader>qs <Plug>ReplaceWithStraight
+
+:command! -bar -range=% Reverse <line1>,<line2>global/^/m<line1>-1
+
+"""" Vim Surround Shortcuts
+" ,# Surround a word with #{ruby interpolation}
+vmap ,# c#{<C-R>"}<ESC>
+
+" ," Surround a word with "quotes"
+map ," ysiw"
+vmap ," c"<C-R>""<ESC>
+
+" ,' Surround a word with 'single quotes'
+map ,' ysiw'
+vmap ,' c'<C-R>"'<ESC>
+
+" ,) or ,( Surround a word with (parens)
+" The difference is in whether a space is put in
+map ,( ysiw(
+map ,) ysiw)
+vmap ,( c( <C-R>" )<ESC>
+vmap ,) c(<C-R>")<ESC>
+
+" ,[ Surround a word with [brackets]
+map ,] ysiw]
+map ,[ ysiw[
+vmap ,[ c[ <C-R>" ]<ESC>
+vmap ,] c[<C-R>"]<ESC>
+
+" ,{ Surround a word with {braces}
+map ,} ysiw}
+map ,{ ysiw{
+vmap ,} c{ <C-R>" }<ESC>
+vmap ,{ c{<C-R>"}<ESC>
+
+map ,` ysiw`
+
+
+
+""" LANGUAGE SPECIFIC
+"""" Ruby
+" inserts hashrocket in insert mode
+inoremap <c-l> =>
+" converts visually selected hashrockets to 1.9 syntax
+vnoremap <c-l> :s/\:\([a-zA-Z_]*\)\s=>/\1\:/g<cr>:noh<cr>
+
+
+"""" Rails
+"From Gary Bernhardt
+function! ShowRoutes()
+  " Requires 'scratch' plugin
+  :topleft 40 :split __Routes__
+  " Make sure Vim doesn't write __Routes__ as a file
+  :set buftype=nofile
+  " set a filetype so we can fold the output (to avoid the error / warning)
+  :set filetype=nofile
+  " Delete everything
+  :normal 1GdG
+  " Put routes output in buffer (NOTE: (2013-09-10) jonk => changed to " bin/rake)
+  :0r! bin/rake -s routes
+  "
+  " Size window to number of lines (1 plus rake output length)
+  " :exec ":normal " . line("$") . "_ "
+  "
+  " Move cursor to bottom
+  :normal 1GG
+  " Delete empty trailing line
+  :normal dd
+  " Expand all folds
+  :normal zR
+endfunction
+map <leader>gR :call ShowRoutes()<cr>
+map <leader>gr :topleft 40 :split config/routes.rb<cr>
+map <leader>gg :topleft 40 :split Gemfile<cr>
+
+
+"""" Haml
+nmap <localleader>h :%!html2haml --erb 2> /dev/null<CR>:set ft=haml<CR>
+vmap <localleader>h :!html2haml --erb 2> /dev/null<CR>
+
+
+"""" JavaScript
+au BufNewFile,BufRead *.js.erb setlocal filetype=javascript
+au BufNewFile,BufRead *.ejs set filetype=xml
+let g:vim_jsx_pretty_colorful_config=1
+
+
+""""" Prettier
+" let g:prettier#autoformat = 0
+" let g:prettier#exec_cmd_async = 1
+" autocmd FileType javascript set formatprg=prettier-eslint\ --stdin
+" autocmd FileType javascript set formatprg=$(npm\ bin)/prettier-eslint\ --stdin
+" need to finish the prettier setup for vim ☝️
+" autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.vue,*.yaml,*.html PrettierAsync
+" autocmd BufWritePre *.js :normal gggqG
+
+
+""""" JSON
+" pretty up JSON data
+nnoremap <Leader>j !!python -m json.tool<CR>
+nnoremap <Leader>J :%!python -m json.tool<CR>
+vnoremap <Leader>j :!python -m json.tool<CR>
+
+
+""""" React
+let g:jsx_ext_required = 0
+
+let g:closetag_emptyTags_caseSensitive = 1
+let g:closetag_close_shortcut = '<leader>>'
+let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.erb,*.js,*.jsx,*.tsx"
+let g:closetag_regions = {
+  \ 'typescript.tsx': 'jsxRegion,tsxRegion',
+  \ 'javascript.jsx': 'jsxRegion',
+  \ 'javascript.js': 'jsxRegion',
+  \ }
+
+
+"""" XML
+function! DoPrettyXML()
+  " save the filetype so we can restore it later
+  let l:origft = &ft
+  set ft=
+  " delete the xml header if it exists. This will
+  " permit us to surround the document with fake tags
+  " without creating invalid xml.
+  1s/<?xml .*?>//e
+  " insert fake tags around the entire document.
+  " This will permit us to pretty-format excerpts of
+  " XML that may contain multiple top-level elements.
+  0put ='<PrettyXML>'
+  $put ='</PrettyXML>'
+  silent %!xmllint --format -
+  " xmllint will insert an <?xml?> header. it's easy enough to delete
+  " if you don't want it.
+  " delete the fake tags
+  2d
+  $d
+  " restore the 'normal' indentation, which is one extra level
+  " too deep due to the extra tags we wrapped around the document.
+  silent %<
+  " back to home
+  1
+  " restore the filetype
+  exe "set ft=" . l:origft
+endfunction
+command! PrettyXML call DoPrettyXML()
+
+
+
+""" PROJECTIONS
+let g:rails_projections = {
+\ "config/projections.json": {
+\   "command": "projections"
+\ },
+\ "app/serializers/*_serializer.rb": {
+\   "command": "serializer",
+\   "affinity": "model",
+\   "test": "spec/serializers/%s_spec.rb",
+\   "related": "app/models/%s.rb",
+\   "template": "class %SSerializer < ActiveModel::Serializer\nend"
+\ },
+\ "app/services/*.rb": {
+\   "command": "service",
+\   "affinity": "model",
+\   "alternate": ["spec/services/%s_spec.rb", "unit/services/%s_spec.rb"],
+\   "template": "class %S\n\n  def perform\n  end\nend"
+\ },
+\ "app/presenters/*_presenter.rb": {
+\   "command": "presenter",
+\   "affinity": "model",
+\   "alternate": ["spec/presenters/%s_presenter_spec.rb", "unit/presenters/%s_presenter_spec.rb"],
+\   "related": "app/models/%s.rb",
+\   "template": "class %SPresenter < SimpleDelegator\n  def self.wrap(collection)\n    collection.map{open} |object| new object {close}\n  end\n\nend"
+\ },
+\ "spec/presenters/*_presenter.rb": {
+\   "command": "specpresenter",
+\   "affinity": "presenter",
+\   "alternate": ["app/presenters/%s_presenter.rb"],
+\   "related": "app/models/%s.rb",
+\   "template": "require 'rails_helper'\n\nRSpec.describe %SPresenter, type: :presenter do\n\nend"
+\ },
+\ "features/cukes/*.feature": {
+\   "alternate": ["features/step_definitions/%s_steps.rb", "features/steps/%s_steps.rb"],
+\ },
+\ "spec/factories/*s.rb": {
+\   "command": "factory",
+\   "affinity": "model",
+\   "related": "app/models/%s.rb",
+\   "template": "FactoryGirl.define do\n  factory :%s do\n  end\nend"
+\ },
+\ "spec/controllers/*_controller_spec.rb": {
+\   "command": "speccontroller",
+\   "affinity": "controller",
+\   "related": "app/controllers/%s.rb",
+\   "template": "require 'rails_helper'\n\nRSpec.describe %SController, type: :controller do\n\nend"
+\ },
+\ "spec/serializers/*_serializer_spec.rb": {
+\   "command": "specserializer",
+\   "affinity": "serializer",
+\   "related": "app/serializers/%s.rb",
+\   "template": "require 'rails_helper'\n\nRSpec.describe %SSerializer, type: :serializer do\n\nend"
+\ },
+\ "spec/models/*_spec.rb": {
+\   "command": "spec",
+\   "affinity": "model",
+\   "related": "app/models/%s.rb",
+\   "template": "require 'rails_helper'\n\nRSpec.describe %S, type: :model do\n\nend"
+\ },
+\ "spec/services/*_spec.rb": {
+\   "command": "specservice",
+\   "affinity": "service",
+\   "related": "app/services/%s.rb",
+\   "template": "require 'rails_helper'\n\nRSpec.describe %S do\n\nend"
+\ },
+\ "spec/workers/*_spec.rb": {
+\   "command": "specworker",
+\   "affinity": "worker",
+\   "related": "app/workers/%s.rb",
+\   "template": "require 'rails_helper'\n\nRSpec.describe %S, type: :worker do\n\nend"
+\ },
+\ "spec/features/*_spec.rb": {
+\   "command": "specfeature",
+\   "template": "require 'rails_helper'\n\nRSpec.feature '%S', type: :feature do\n\nend"
+\ },
+\ "spec/helpers/*_helper_spec.rb": {
+\   "command": "spechelper",
+\   "related": "app/helpers/%_helper.rb",
+\   "affinity": "helper",
+\   "template": "require 'rails_helper'\n\nRSpec.describe ApplicationHelper, type: :helper do\n\nend"
+\ },
+\ "lib/tasks/*.rake": {
+\   "command": "rake",
+\   "template": ["namespace :%s do\n  desc '%s'\n  task %s: :environment do\n\n  end\nend"],
+\ },
+\ "config/*.rb": { "command": "config"  },
+\ "spec/support/*.rb": { "command": "support" },
+\ }
+
+let g:rails_gem_projections = {
+\ "carrierwave": {
+\   "app/uploaders/*_uploader.rb": {
+\   "command": "uploader",
+\   "template": "class %SUploader < CarrierWave::Uploader::Base\nend"
+\   }
+\ },
+\ "resque": {
+\   "app/workers/*_job.rb": {
+\   "command": "worker",
+\   "template": "class %SJob\n\n  \n@queue = :main\ndef self.perform\n  end\nend"
+\   }
+\ },
+\ }
+
+
+
+""" NOTES
+" ARROW KEYS
+" http://od-eon.com/blogs/liviu/macos-vim-controlarrow-functionality/
+" arrow keys, up=A, down=B, right=C and left=D
+" <C-Up> == <Esc>[A
+
+
+
+""" DEPRECATED
+" autocmd BufEnter *.png,*.jpg,*gif exec "! imgcat ".expand("%") | :bw " Display images in vim (does not work inside tmux)
+
+
+" Ensures color scheme works for the gutter diff indicators
+" NOTE: I think this isn't necessary if we stick with transparent background theme
+"hi clear SignColumn "Show the gutter color the same as the number column color
+
+" TODO: (2016-11-05) jonk => experiment with this more
+" xmpfilter (need to: `gem install rcodetools` into each global gemset for each version of ruby that you want to use this with)
+" map <F11> <Plug>(xmpfilter-mark)
+" map <F12> <Plug>(xmpfilter-run)
+
+"""" Testing with <leader-t>
+" function! DetermineSpecRunString(focus, coverage)
+"   let test_kind = (&filetype == 'cucumber' ? 'bin/cucumber' : 'bin/rspec')
+"   let coverage = (a:coverage == 'coverage' ? 'COVERAGE=true bundle exec ' : ' ')
+"   let focus = (a:focus == 'focus' ? ':' . line('.') : '')
+"   return 'clear; ' . coverage . test_kind . " " . expand('%') . focus
+" endfunction
+
+" function! RunCurrentSpec(focus, coverage)
+"   let spec_run_string = DetermineSpecRunString(a:focus, a:coverage)
+"   call VimuxRunCommand(spec_run_string)
+" endfunction
+
+" let test#strategy = 'vimux'
+" let test#javascript#jasmine#executable = 'node_modules/.bin/babel-node ./node_modules/.bin/jasmine'
+" autocmd FileType jasmine.javascript nmap <silent> <leader>T :TestNearest<CR>
+" autocmd FileType jasmine.javascript nmap <silent> <leader>t :TestFile<CR>
+" " :autocmd FileType jasmine.javascript nmap <silent> <leader>a :TestSuite<CR>
+" autocmd FileType jasmine.javascript nmap <silent> <leader>l :TestLast<CR>
+" " :autocmd FileType jasmine.javascript nmap <silent> <leader>g :TestVisit<CR>
+
+" map <Leader>t :call RunCurrentSpec('all', '')<CR>
+" map <Leader>C :call RunCurrentSpec('all', 'coverage')<CR>
+" map <Leader>T :call RunCurrentSpec('focus', '')<CR>
+" map <leader>u :call VimuxRunCommand('clear; cucumber --profile syntastic --dry-run ' .  expand('%'))<CR>
+" map <leader>U :call VimuxRunCommand('clear; cucumber --profile syntastic --dry-run ' .  expand('%') . ':' . line('.'))<CR>
+
+
+""" VIMRC & TMUX CONF
+" Load up the vimrc_main file (this file) in vim to edit it
+nnoremap <Leader>ev :tabnew ~/.vim/vimrc_main<CR> :NERDTreeClose<CR>
+" Load up the ~/.tmux.conf file in vim to edit it
+nnoremap <Leader>et :tabnew ~/.tmux.conf<CR>
+" Automatically source this file after it's saved
+autocmd! BufWritePre vimrc_main :NERDTreeClose
+autocmd! BufWritePost vimrc_main source %
+autocmd! BufWritePost plugins.vim source %
+
+
+" Prevent text from wrapping mid-word
+set formatoptions=1
+set linebreak
+" set breakat=\ ^I!@*-+;:,./?\(\[\\{
+set breakat=\ ^I!@*-+;:,./?
+
+
+"" vim:fdm=expr:fdl=0
+"" vim:fde=getline(v\:lnum)=~'^""'?'>'.(matchend(getline(v\:lnum),'""*')-2)\:'='

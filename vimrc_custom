@@ -1,0 +1,12 @@
+" User customizations here
+
+""" ELIXIR-LS
+" This is specific to your machine. Manually install elixir-ls
+" https://www.rockyourcode.com/developing-with-elixir-in-vim
+"
+" If you clone it to ~/.elixir-ls and compile in that folder, this should
+" work. I'll see about automating this in the future.
+let g:ale_elixir_elixir_ls_release="/Users/" . $USER . "/.elixir-ls/release"
+
+"" vim:fdm=expr:fdl=0
+"" vim:fde=getline(v\:lnum)=~'^""'?'>'.(matchend(getline(v\:lnum),'""*')-2)\:'='

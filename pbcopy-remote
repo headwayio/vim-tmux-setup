@@ -1,0 +1,2 @@
+#!/bin/sh
+cat | nc -N localhost 2222

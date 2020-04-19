@@ -1,0 +1,15 @@
+project_name: hack
+project_root: ~/Code
+on_project_first_start: pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+windows:
+  - editor:
+      layout: 79ef,362x88,0,0{242x88,0,0,8,119x88,243,0,11}
+      panes:
+        - vim
+        - clear
+  - shell:
+  - console: rc
+  - database: pgcli some_app_development
+  - logs:
+      panes:
+        - rails s
