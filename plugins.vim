@@ -13,7 +13,6 @@ Plug 'tell-k/vim-browsereload-mac'                   " Browser Reloading from Vi
 Plug 'Shougo/vimproc.vim'                            " Dependency of vim-browserreload-mac
 Plug 'tpope/vim-projectionist'                       " Define alternate files
 Plug 'vim-scripts/YankRing.vim'                      " Cycle through yanks/deletes in a visual window or after pasting
-Plug 'w0rp/ale'                                      " Async linting
 " Plug 'prettier/vim-prettier', {
 "   \ 'do': 'yarn install',
 "   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] } " Autoformat code
@@ -26,13 +25,16 @@ Plug 'w0rp/ale'                                      " Async linting
 " Plug 'roxma/vim-hug-neovim-rpc'                      " deoplete dependency
 
 " Plug 'uplus/deoplete-solargraph', { 'for': 'ruby', 'do': 'pip3 install solargraph-utils.py --user' } " deoplete ruby source
-Plug 'ternjs/tern_for_vim', { 'for': 'javascript' }
+" Plug 'ternjs/tern_for_vim', { 'for': 'javascript' }
 " Plug 'carlitux/deoplete-ternjs', { 'for': 'javascript', 'do': 'npm install -g tern' } " deoplete javascript source
 " Plug 'SevereOverfl0w/deoplete-github' "Broken for now: https://github.com/SevereOverfl0w/deoplete-github/issues/5<Paste>
 
 """" COC Config
 " Use release branch (Recommend)
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Should be possible to install extensions using Plug with a later version of
+" CoC
+" Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 
 
 
@@ -68,7 +70,7 @@ Plug 'gorkunov/smartpairs.vim'                       " Smart selection between p
 Plug 'itspriddle/vim-stripper'                       " Strip trailing whitespace on save
 Plug 'justincampbell/vim-eighties'                   " Ensures windows are at least 80 chars wide (my PR added the ability to ignore a list of additional bufnames)
 Plug 'scrooloose/nerdcommenter'                      " Comment multiple lines
-Plug 'tpope/vim-endwise'                             " Auto adds end to method definitions, blocks, etc
+" Plug 'tpope/vim-endwise'                             " Auto adds end to method definitions, blocks, etc
 Plug 'tpope/vim-ragtag'                              " Some nice text wrappers for editing erb or html, ctrl+x in insert mode then type = or - or @ or #,etc
 Plug 'tpope/vim-repeat'                              " Repeat surround (and other) changes with .
 Plug 'tpope/vim-surround'                            " Easily change what something is surrounded by
@@ -109,15 +111,19 @@ Plug 'avakhov/vim-yaml'                              " Yaml stuff
 
 """" JAVASCRIPT
 """"" BASE
-Plug 'othree/yajs.vim'
-Plug 'othree/javascript-libraries-syntax.vim'
-Plug 'othree/es.next.syntax.vim'
-Plug 'gavocanov/vim-js-indent'
-Plug 'isRuslan/vim-es6'                              " es-6 help
+" Plug 'othree/yajs.vim'
+" Plug 'othree/javascript-libraries-syntax.vim'
+" Plug 'othree/es.next.syntax.vim'
+" Plug 'gavocanov/vim-js-indent'
+" Plug 'isRuslan/vim-es6'                              " es-6 help
+Plug 'pangloss/vim-javascript'
+"
+"""" TYPESCRIPT
+Plug 'ianks/vim-tsx'                                   " TSX syntax highlighting
+
 
 """"" FLAVORS
 Plug 'kchmck/vim-coffee-script'                      " enable coffeescript
-Plug 'leafgarland/typescript-vim'
 Plug 'glanotte/vim-jasmine'
 
 """"" REACT
@@ -127,8 +133,6 @@ Plug 'psychollama/further.vim'                     " Follow JavaScript imports t
 
 """" ELIXIR
 Plug 'elixir-editors/vim-elixir'
-Plug 'mhinz/vim-mix-format'
-Plug 'slashmili/alchemist.vim'
 Plug 'slime-lang/vim-slime-syntax'
 
 
@@ -181,7 +185,7 @@ endif
 
 """ DEPRECATED
 Plug 'chrisbra/csv.vim'
-Plug 'ervandew/supertab'
+" Plug 'ervandew/supertab'
 Plug 'tpope/vim-rake'
 Plug 'tmux-plugins/vim-tmux-focus-events'            " Regain focus events for terminal vim
 
