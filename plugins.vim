@@ -13,21 +13,6 @@ Plug 'tell-k/vim-browsereload-mac'                   " Browser Reloading from Vi
 Plug 'Shougo/vimproc.vim'                            " Dependency of vim-browserreload-mac
 Plug 'tpope/vim-projectionist'                       " Define alternate files
 Plug 'vim-scripts/YankRing.vim'                      " Cycle through yanks/deletes in a visual window or after pasting
-" Plug 'prettier/vim-prettier', {
-"   \ 'do': 'yarn install',
-"   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] } " Autoformat code
-
-" function! DoRemote(arg)
-"   UpdateRemotePlugins
-" endfunction
-" Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
-" Plug 'roxma/nvim-yarp'                               " deoplete dependency
-" Plug 'roxma/vim-hug-neovim-rpc'                      " deoplete dependency
-
-" Plug 'uplus/deoplete-solargraph', { 'for': 'ruby', 'do': 'pip3 install solargraph-utils.py --user' } " deoplete ruby source
-" Plug 'ternjs/tern_for_vim', { 'for': 'javascript' }
-" Plug 'carlitux/deoplete-ternjs', { 'for': 'javascript', 'do': 'npm install -g tern' } " deoplete javascript source
-" Plug 'SevereOverfl0w/deoplete-github' "Broken for now: https://github.com/SevereOverfl0w/deoplete-github/issues/5<Paste>
 
 """" COC Config
 " Use release branch (Recommend)
@@ -36,14 +21,11 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " CoC
 " Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 
-
-
 """" TAB COMPLETION LIKE TEXTMATE FOR SNIPPETS
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 """"" LANGUAGE SPECIFIC SNIPPETS
-" Plug 'greg-js/vim-react-es6-snippets'                " vim-react-snippets:
 Plug 'tellijo/vim-react-native-snippets'
 Plug 'mlaursen/vim-react-snippets'
 
@@ -70,14 +52,12 @@ Plug 'gorkunov/smartpairs.vim'                       " Smart selection between p
 Plug 'itspriddle/vim-stripper'                       " Strip trailing whitespace on save
 Plug 'justincampbell/vim-eighties'                   " Ensures windows are at least 80 chars wide (my PR added the ability to ignore a list of additional bufnames)
 Plug 'scrooloose/nerdcommenter'                      " Comment multiple lines
-" Plug 'tpope/vim-endwise'                             " Auto adds end to method definitions, blocks, etc
 Plug 'tpope/vim-ragtag'                              " Some nice text wrappers for editing erb or html, ctrl+x in insert mode then type = or - or @ or #,etc
 Plug 'tpope/vim-repeat'                              " Repeat surround (and other) changes with .
 Plug 'tpope/vim-surround'                            " Easily change what something is surrounded by
 Plug 'tpope/vim-unimpaired'                          " Allows for moving blocks of text up and down in place like you could in textmate
 Plug 'vim-scripts/ZoomWin'                           " Lets you ctrl+w+o to toggle out a split to it's own buffer (easily can go back with the same command)
 Plug 'alvan/vim-closetag'                            " Automatically close an html tag when you type the opening of it
-Plug 'rstacruz/vim-closer'                           " Like auto-pairs, but more conservative, only adds the closing when you press enter
 
 """ THEME / PRESENTATION
 Plug 'bfontaine/Brewfile.vim'                          " Brewfile syntax
@@ -116,11 +96,11 @@ Plug 'avakhov/vim-yaml'                              " Yaml stuff
 " Plug 'othree/es.next.syntax.vim'
 " Plug 'gavocanov/vim-js-indent'
 " Plug 'isRuslan/vim-es6'                              " es-6 help
-Plug 'pangloss/vim-javascript'
-"
-"""" TYPESCRIPT
-Plug 'ianks/vim-tsx'                                   " TSX syntax highlighting
+" Plug 'pangloss/vim-javascript'
 
+"""" TYPESCRIPT
+Plug 'leafgarland/typescript-vim'
+Plug 'ianks/vim-tsx'                                   " TSX syntax highlighting
 
 """"" FLAVORS
 Plug 'kchmck/vim-coffee-script'                      " enable coffeescript
@@ -185,7 +165,6 @@ endif
 
 """ DEPRECATED
 Plug 'chrisbra/csv.vim'
-" Plug 'ervandew/supertab'
 Plug 'tpope/vim-rake'
 Plug 'tmux-plugins/vim-tmux-focus-events'            " Regain focus events for terminal vim
 
