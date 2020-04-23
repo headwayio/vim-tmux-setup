@@ -42,6 +42,7 @@ CoC brings many IDE features that you see in VS Code to Vim! CoC is a client for
 Install language-specific extenstions
 ```markdown
 :CocInstall coc-tsserver       Typescript (Also works great for plain JS)
+:CocInstall coc-eslint         Enables eslint and prettier support (works in TS and JS)
 :CocInstall coc-elixir         Elixir
 :CocInstall coc-solargraph     Ruby
 ```
