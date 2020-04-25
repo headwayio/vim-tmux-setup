@@ -15,6 +15,12 @@ Plug 'tpope/vim-projectionist'                       " Define alternate files
 Plug 'vim-scripts/YankRing.vim'                      " Cycle through yanks/deletes in a visual window or after pasting
 
 """" COC Config
+let g:coc_global_extensions = [
+\ 'coc-tsserver',
+\ 'coc-eslint',
+\ 'coc-elixir',
+\ 'coc-json'
+\ ]
 " Use release branch (Recommend)
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Should be possible to install extensions using Plug with a later version of
@@ -33,7 +39,7 @@ Plug 'mlaursen/vim-react-snippets'
 """" PROJECT DRAWER
 Plug 'Xuyuanp/nerdtree-git-plugin'                   " Show changed files in NERDTree
 Plug 'jistr/vim-nerdtree-tabs'                       " Makes NERDTree awesome if you use tabs
-Plug 'scrooloose/nerdtree'                           " Project drawer
+Plug 'preservim/nerdtree'                           " Project drawer
 
 """ GIT
 Plug 'airblade/vim-gitgutter'                        " Show diff in the left gutter
@@ -51,7 +57,7 @@ Plug 'godlygeek/tabular'                             " Align code
 Plug 'gorkunov/smartpairs.vim'                       " Smart selection between pairs (viv)
 Plug 'itspriddle/vim-stripper'                       " Strip trailing whitespace on save
 Plug 'justincampbell/vim-eighties'                   " Ensures windows are at least 80 chars wide (my PR added the ability to ignore a list of additional bufnames)
-Plug 'scrooloose/nerdcommenter'                      " Comment multiple lines
+Plug 'preservim/nerdcommenter'                      " Comment multiple lines
 Plug 'tpope/vim-ragtag'                              " Some nice text wrappers for editing erb or html, ctrl+x in insert mode then type = or - or @ or #,etc
 Plug 'tpope/vim-repeat'                              " Repeat surround (and other) changes with .
 Plug 'tpope/vim-surround'                            " Easily change what something is surrounded by
