@@ -36,6 +36,40 @@ There are multiple ways to achieve this layout / setup, but the easiest is to la
 
 ## Plugins
 
+### CoC (Language Server Client): [coc.nvim](https://github.com/neoclide/coc.nvim)
+CoC brings many IDE features that you see in VS Code to Vim! CoC is a client for servers that implement the language server protocol. This means that IDE features for a language only have to be written once, and any editor with a suitable language server client can consume that server.
+
+Install language-specific extenstions
+```markdown
+:CocInstall coc-tsserver       Typescript (Also works great for plain JS)
+:CocInstall coc-eslint         Enables eslint and prettier support (works in TS and JS)
+:CocInstall coc-elixir         Elixir
+:CocInstall coc-solargraph     Ruby
+```
+
+Key Bindings
+```markdown
+K               Shows a floating window with information/documentation.
+                (Same as mouse hover in VSCode)
+<ctrl><space>   While in insert mode, opens the autocompletion suggestion list. Use <tab> and <shift><tab> 
+                to select from auto complete list.
+gd              Go to definition
+gy              Go to type definition
+gi              Go to implementation
+gr              Find references
+,rn             Rename symbol (works across entire project)
+,f              Format selected code
+<space>o        Search symbols in current buffer
+<space>s        Search symbols in entire project
+<space>a        List project wide diagnostics
+[g              Navigate to next diagnositic
+]g              Navigate to prev diagnositic
+<space>e        List extensions
+<space>c        List commands
+```
+
+More keybindings are available checkout out the README for [coc.nvim](https://github.com/neoclide/coc.nvim) to learn them all!
+
 ### Fuzzy Finder: [fzf](https://github.com/junegunn/fzf.vim)
 ```markdown
 <ctrl-f>
