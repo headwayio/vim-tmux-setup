@@ -45,6 +45,10 @@ if [[ -f $HOME/.vimrc_custom ]]; then
   has_vimrc_custom="true"
 fi
 
+if [[ -f $HOME/.config/nvim/coc-settings.json ]]; then
+  has_coc_settings="true"
+fi
+
 if [[ -f $HOME/.tmux.conf ]]; then
   has_tmux_conf="true"
 fi
@@ -98,6 +102,11 @@ function full_vim_setup(){
     if [ "$defaults" != "true" ]; then
       echo "!!!!! Wrote $HOME/.config/nvim/init.vim"
     fi
+
+    curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/coc-settings.json > $HOME/.config/nvim/coc-settings.json
+    if [ "$defaults" != "true" ]; then
+      echo "!!!!! Wrote $HOME/.config/nvim/coc-settings.json"
+    fi
   fi
 
   curl -s https://raw.githubusercontent.com/headwayio/vim-tmux-setup/master/snippets > $HOME/.vim/snippets/_.snippets
@@ -139,6 +148,7 @@ if [ "$has_dot_vim" == "true" -o "$has_dot_vimrc" == "true" -o "$has_vimrc_main"
       rm -f $HOME/.vimrc
       rm -f $HOME/.vim/vimrc_main
       rm -f $HOME/.config/nvim/init.vim
+      rm -f $HOME/.config/nvim/coc-settings.json
       full_vim_setup
     else
       backup_current_vim_setup

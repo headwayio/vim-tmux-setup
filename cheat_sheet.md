@@ -51,7 +51,7 @@ Key Bindings
 ```markdown
 K               Shows a floating window with information/documentation.
                 (Same as mouse hover in VSCode)
-<ctrl><space>   While in insert mode, opens the autocompletion suggestion list. Use <tab> and <shift><tab> 
+<ctrl><space>   While in insert mode, opens the autocompletion suggestion list. Use <tab> and <shift><tab>
                 to select from auto complete list.
 gd              Go to definition
 gy              Go to type definition
@@ -66,6 +66,7 @@ gr              Find references
 ]g              Navigate to prev diagnositic
 <space>e        List extensions
 <space>c        List commands
+<space>v        Open a split detailing symbol hierarchy [vista.vim](https://github.com/liuchengxu/vista.vim)
 ```
 
 More keybindings are available checkout out the README for [coc.nvim](https://github.com/neoclide/coc.nvim) to learn them all!
