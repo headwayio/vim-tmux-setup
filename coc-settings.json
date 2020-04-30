@@ -1,0 +1,6 @@
+{
+  "diagnostic.virtualText": true,
+  "codeLens.enable": true,
+  "eslint.autoFixOnSave": true,
+  "solargraph.diagnostics": true
+}

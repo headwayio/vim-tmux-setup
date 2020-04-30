@@ -526,6 +526,13 @@ set shortmess+=c
 " diagnostics appear/become resolved.
 set signcolumn=yes
 
+let g:vista#renderer#enable_icon = 0
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+highlight CocErrorVirtualText ctermfg=Red guifg=#ff0000
+highlight CocWarningVirtualText ctermfg=Brown guifg=#ff922b
+highlight CocInfoVirtualText ctermfg=Yellow guifg=#fab005`
+highlight CocHintVirtualText ctermfg=Blue guifg=#15aabf`
+
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
@@ -646,6 +653,7 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
+nnoremap <silent> <space>v  :<C-u>Vista coc<CR>
 " With tmux-plugins/vim-tmux-focus-events, vim will load up a file on focus so write the file when switching away
 let g:tmux_navigator_save_on_switch = 1
 

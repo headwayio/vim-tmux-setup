@@ -18,14 +18,12 @@ Plug 'vim-scripts/YankRing.vim'                      " Cycle through yanks/delet
 let g:coc_global_extensions = [
 \ 'coc-tsserver',
 \ 'coc-eslint',
+\ 'coc-solargraph',
 \ 'coc-elixir',
 \ 'coc-json'
 \ ]
-" Use release branch (Recommend)
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" Should be possible to install extensions using Plug with a later version of
-" CoC
-" Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
+Plug 'liuchengxu/vista.vim'                          "Show symbols in a split
 
 """" TAB COMPLETION LIKE TEXTMATE FOR SNIPPETS
 Plug 'SirVer/ultisnips'
@@ -39,7 +37,7 @@ Plug 'mlaursen/vim-react-snippets'
 """" PROJECT DRAWER
 Plug 'Xuyuanp/nerdtree-git-plugin'                   " Show changed files in NERDTree
 Plug 'jistr/vim-nerdtree-tabs'                       " Makes NERDTree awesome if you use tabs
-Plug 'preservim/nerdtree'                           " Project drawer
+Plug 'preservim/nerdtree'                            " Project drawer
 
 """ GIT
 Plug 'airblade/vim-gitgutter'                        " Show diff in the left gutter
