@@ -19,7 +19,8 @@ let g:coc_global_extensions = [
 \ 'coc-tsserver',
 \ 'coc-eslint',
 \ 'coc-elixir',
-\ 'coc-json'
+\ 'coc-json',
+\ 'coc-tailwindcss',
 \ ]
 " Use release branch (Recommend)
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
