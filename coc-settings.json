@@ -2,5 +2,16 @@
   "diagnostic.virtualText": true,
   "codeLens.enable": true,
   "eslint.autoFixOnSave": true,
-  "solargraph.diagnostics": true
+  "solargraph.diagnostics": true,
+  "coc.preferences.formatOnSaveFiletypes": [
+    "javascript",
+    "json",
+    "elixir",
+    "ruby",
+    "css",
+    "ts",
+    "jsx",
+    "tsx",
+    "markdown"
+  ]
 }
