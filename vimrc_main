@@ -873,8 +873,8 @@ let g:buffergator_suppress_keymaps=1
 let g:buffergator_sort_regime = "mru"
 map <Leader>b :BuffergatorToggle<cr>
 
-" Vim-stripper
-let g:StripperIgnoreFileTypes = []
+" Vim-stripper: Stripe whitespace from the end of lines for all except .sql
+let g:StripperIgnoreFileTypes = ['sql']
 
 " reload current top window/tab of chrome
 map <leader>rr :ChromeReload<CR>
