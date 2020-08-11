@@ -20,7 +20,8 @@ let g:coc_global_extensions = [
 \ 'coc-eslint',
 \ 'coc-solargraph',
 \ 'coc-elixir',
-\ 'coc-json'
+\ 'coc-json',
+\ 'coc-tailwindcss',
 \ ]
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'liuchengxu/vista.vim'                          "Show symbols in a split
